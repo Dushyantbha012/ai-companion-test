@@ -1,10 +1,16 @@
 import { ReactNode } from "react";
 import { auth } from "@clerk/nextjs/server";
+import Navbar from "@/components/navigation/navbar";
 
-const Layout = ({ children }: { children: ReactNode }) => {
+const RootLayout = ({ children }: { children: ReactNode }) => {
   const { userId }: { userId: string | null } = auth();
   if (!userId) auth().redirectToSignIn();
-  return <div>{children}</div>;
+  return (
+    <div className="h-full">
+      <Navbar />
+      <main className="md:pl-20 pt-16 h-full">{children}</main>
+    </div>
+  );
 };
 
-export default Layout;
+export default RootLayout;
