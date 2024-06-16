@@ -54,3 +54,41 @@ export async function PATCH(
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { companionId: string } }
+) {
+  try {
+    const user = await currentUser();
+    const companionId = params.companionId;
+    if (!companionId) {
+      return new NextResponse("Companion Id is Required", { status: 401 });
+    }
+    if (!user || !user.id || !user.firstName) {
+      return new NextResponse("Unauthorised", { status: 401 });
+    }
+    const checkCompanion = await prismadb.companion.findUnique({
+      where: {
+        id: companionId,
+        userId: user.id,
+      },
+    });
+    if (!checkCompanion) {
+      return new NextResponse(
+        "Companion doesn't exists or You are not authorised",
+        { status: 402 }
+      );
+    }
+    await prismadb.companion.delete({
+      where: {
+        id: companionId,
+        userId: user.id,
+      },
+    });
+    return new NextResponse("Companion Deleted", { status: 200 });
+  } catch (error) {
+    console.log("COMPANION_PATCH", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}

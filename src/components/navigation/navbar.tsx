@@ -30,7 +30,7 @@ const Navbar = () => {
       </div>
       <div className="flex items-center gap-x-3">
         <ThemeToggle />
-        <UserButton />
+        <UserButton afterSignOutUrl="/" />
       </div>
     </div>
   );

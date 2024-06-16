@@ -32,6 +32,7 @@ import { Button } from "../ui/button";
 import { Wand2 } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -45,8 +46,18 @@ const formSchema = z.object({
 });
 
 const CompanionForm = ({ initialData, categories }: CompanionFormProps) => {
+  console.log("here");
+  const { user } = useUser();
   const { toast } = useToast();
   const router = useRouter();
+  if (initialData && user?.id !== initialData?.userId) {
+    console.log("redirected");
+    toast({
+      description: `Can not edit the Companion, ${initialData?.name}`,
+      variant: "destructive",
+    });
+    router.push("/");
+  }
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
@@ -69,6 +80,7 @@ const CompanionForm = ({ initialData, categories }: CompanionFormProps) => {
       toast({ description: "success" });
       router.refresh();
       router.push("/");
+      router.refresh();
     } catch (error) {
       toast({
         variant: "destructive",
