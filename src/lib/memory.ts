@@ -13,16 +13,19 @@ export class MemoryManager {
   private static instance: MemoryManager;
   private history: Redis;
   private vectorDBClient: Pinecone;
+
   public constructor() {
     this.history = Redis.fromEnv();
     this.vectorDBClient = new Pinecone();
   }
+
   public async init() {
     if (this.vectorDBClient instanceof Pinecone) {
-      this.vectorDBClient = new Pinecone({
+      this.vectorDBClient = await new Pinecone({
         apiKey: process.env.PINECONE_API_KEY!,
       });
     }
+    console.log("vectordb is ", this.vectorDBClient._readEnvironmentConfig());
   }
   public async vectorSearch(
     recentChatHistory: string,
@@ -64,7 +67,7 @@ export class MemoryManager {
     const key = this.generateRedisCompanionKey(companionKey);
     const result = await this.history.zadd(key, {
       score: Date.now(),
-      member: Text,
+      member: test,
     });
     return result;
   }
