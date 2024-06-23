@@ -47,7 +47,7 @@ const ChatMessages = ({
       {messages.map((message) => (
         <ChatMessage
           role={message.role}
-          key={message.id}
+          key={message.content}
           content={message.content}
           src={message.role === "system" ? companion.src : message.src}
         />
