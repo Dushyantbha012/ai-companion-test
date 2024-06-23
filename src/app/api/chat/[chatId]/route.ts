@@ -59,7 +59,9 @@ export async function POST(
     const recentChatHistory = await memoryManager.readLatestHistory(
       companionKey
     );
-
+    console.log(
+      "REached here before similardocs..........................................................................................................................................................................................................\n\n\n"
+    );
     const similarDocs = await memoryManager.vectorSearch(
       recentChatHistory,
       companion_file_name
