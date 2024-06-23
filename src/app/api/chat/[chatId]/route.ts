@@ -69,6 +69,9 @@ export async function POST(
       relevantHistory = similarDocs.map((doc) => doc.pageContent).join("\n");
     }
     const { handlers } = LangChainStream();
+    console.log(
+      "REached here before Replicate..........................................................................................................................................................................................................\n\n\n"
+    );
     const model = new Replicate({
       model:
         "a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5",
@@ -78,6 +81,9 @@ export async function POST(
       apiKey: process.env.REPLICATE_API_TOKEN,
       callbackManager: CallbackManager.fromHandlers(handlers),
     });
+    console.log(
+      "REached here after Replicate..........................................................................................................................................................................................................\n\n\n"
+    );
     model.verbose = true;
     const response = String(
       await model
@@ -96,7 +102,9 @@ export async function POST(
         )
         .catch(console.error)
     );
-
+    console.log(
+      "REached here after response..........................................................................................................................................................................................................\n\n\n"
+    );
     await memoryManager.writeToHistory("" + response.trim(), companionKey);
     var Readable = require("stream").Readable;
     let s = new Readable();
