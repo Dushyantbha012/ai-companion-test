@@ -83,12 +83,13 @@ export async function POST(
       await model
         .invoke(
           `
-        ONLY generate plain sentences without prefix of who is speaking. DO NOT use ${name}:prefix,
+        ONLY generate plain sentences without prefix of who is speaking. DO NOT use ${name}:prefix.DO NOT generate more than 100 words,
 
         ${companion.instruction}
 
         Below are the relevant details about ${name}'s past and the conversation you are in,
-        ${relevantHistory}
+        ${relevantHistory}. Keep these details to yourself and do not repeat them in your output.Give small, concise, relevant and to the point outputs.
+        ONLY ANSWER WHAT IS ASKED AT LAST NOT THE PREVIOUS QUESTIONS.
 
         ${recentChatHistory}\n${name}:
         `
@@ -119,7 +120,7 @@ export async function POST(
         },
       });
     }
-    return new StreamingTextResponse(s);
+    return NextResponse.json({ message: response.trim() });
   } catch (error) {
     console.log("[Chat_Post]", error);
     return new NextResponse("Internal Error", { status: 500 });

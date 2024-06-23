@@ -41,7 +41,7 @@ export class MemoryManager {
     );
 
     const similarDocs = await vectorStore
-      .similaritySearch(recentChatHistory, 4, { fileName: companionFileName })
+      .similaritySearch(recentChatHistory, 3, { fileName: companionFileName })
       .catch((err) => {
         console.log("Failed to get vector search results ", err);
       });

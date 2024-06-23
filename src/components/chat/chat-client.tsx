@@ -3,7 +3,7 @@
 import { Companion, Message } from "@prisma/client";
 import ChatHeader from "./chat-header";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useCompletion } from "@ai-sdk/react";
 import ChatForm from "./chat-form";
 import ChatMessages from "./chat-messages";
@@ -20,19 +20,32 @@ const ChatClient = ({ companion }: ChatClientProps) => {
     companion.messages
   );
 
-  const { input, isLoading, handleInputChange, handleSubmit, setInput } =
-    useCompletion({
-      api: `/api/chat/${companion.id}`,
-      onFinish(prompt, completion) {
-        const systemMessage: ChatMessageProps = {
-          role: "system",
-          content: completion,
-        };
-        setMessages((current) => [...current, systemMessage]);
+  const {
+    input,
+    isLoading,
+    handleInputChange,
+    handleSubmit,
+    setInput,
+    completion,
+  } = useCompletion({
+    api: `/api/chat/${companion.id}`,
+    onResponse(response: Response) {
+      const func = async (response: Response) => {
+        const data = await response.json();
+        console.log(data);
+        if (data.message) {
+          const systemMessage: ChatMessageProps = {
+            role: "system",
+            content: data.message,
+          };
+          setMessages((current) => [...current, systemMessage]);
+        }
         setInput("");
         router.refresh();
-      },
-    });
+      };
+      func(response);
+    },
+  });
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     const userMessage: ChatMessageProps = {
@@ -43,7 +56,7 @@ const ChatClient = ({ companion }: ChatClientProps) => {
     handleSubmit(e);
   };
   return (
-    <div className="flex flex-col h-full p-4 space-y-2">
+    <div className="flex flex-col h-full p-4 space-y-2 w-full">
       <ChatHeader companion={companion} />
       <ChatMessages
         companion={companion}

@@ -3,6 +3,7 @@
 import { Companion } from "@prisma/client";
 import { ChatMessage, ChatMessageProps } from "./chat-message";
 import { ElementRef, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface ChatMessagesProps {
   companion: Companion;
@@ -16,6 +17,7 @@ const ChatMessages = ({
   isLoading,
 }: ChatMessagesProps) => {
   const scrollRef = useRef<ElementRef<"div">>(null);
+  const router = useRouter();
   const [fakeLoading, setFakeLoading] = useState(
     messages.length === 0 ? true : false
   );
@@ -31,6 +33,8 @@ const ChatMessages = ({
 
   useEffect(() => {
     scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
+    console.log(messages);
+    router.refresh();
   }, [messages.length]);
   return (
     <div className=" flex-1 overflow-y-auto pr-4">
@@ -43,9 +47,9 @@ const ChatMessages = ({
       {messages.map((message) => (
         <ChatMessage
           role={message.role}
-          key={message.content}
+          key={message.id}
           content={message.content}
-          src={message.src}
+          src={message.role === "system" ? companion.src : message.src}
         />
       ))}
       {isLoading && <ChatMessage role="system" src={companion.src} isLoading />}
