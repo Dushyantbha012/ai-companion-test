@@ -25,7 +25,7 @@ export class MemoryManager {
         apiKey: process.env.PINECONE_API_KEY!,
       });
     }
-    console.log("vectordb is ", this.vectorDBClient._readEnvironmentConfig());
+    console.log("vectordb init ");
   }
   public async vectorSearch(
     recentChatHistory: string,
@@ -39,12 +39,14 @@ export class MemoryManager {
       }),
       { pineconeIndex }
     );
-
+    console.log("vector store");
     const similarDocs = await vectorStore
       .similaritySearch(recentChatHistory, 3, { fileName: companionFileName })
       .catch((err) => {
         console.log("Failed to get vector search results ", err);
       });
+
+    console.log("vector search");
     return similarDocs;
   }
 
