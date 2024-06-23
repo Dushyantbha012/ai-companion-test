@@ -62,14 +62,14 @@ export async function POST(
     console.log(
       "REached here before similardocs..........................................................................................................................................................................................................\n\n\n"
     );
-    const similarDocs = await memoryManager.vectorSearch(
-      recentChatHistory,
-      companion_file_name
-    );
+    // const similarDocs = await memoryManager.vectorSearch(
+    //   recentChatHistory,
+    //   companion_file_name
+    // );
     let relevantHistory = "";
-    if (!!similarDocs && similarDocs.length != 0) {
-      relevantHistory = similarDocs.map((doc) => doc.pageContent).join("\n");
-    }
+    // if (!!similarDocs && similarDocs.length != 0) {
+    //   relevantHistory = similarDocs.map((doc) => doc.pageContent).join("\n");
+    // }
     const { handlers } = LangChainStream();
     console.log(
       "REached here before Replicate..........................................................................................................................................................................................................\n\n\n"
@@ -87,6 +87,7 @@ export async function POST(
       "REached here after Replicate..........................................................................................................................................................................................................\n\n\n"
     );
     model.verbose = true;
+    // ${recentChatHistory}\n${name}:
     const response = String(
       await model
         .invoke(
@@ -98,8 +99,6 @@ export async function POST(
         Below are the relevant details about ${name}'s past and the conversation you are in,
         ${relevantHistory}. Keep these details to yourself and do not repeat them in your output.Give small, concise, relevant and to the point outputs.
         ONLY ANSWER WHAT IS ASKED AT LAST NOT THE PREVIOUS QUESTIONS.
-
-        ${recentChatHistory}\n${name}:
         `
         )
         .catch(console.error)
