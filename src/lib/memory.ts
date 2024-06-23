@@ -39,14 +39,12 @@ export class MemoryManager {
       }),
       { pineconeIndex }
     );
-    console.log("vector store");
+
     const similarDocs = await vectorStore
       .similaritySearch(recentChatHistory, 3, { fileName: companionFileName })
       .catch((err) => {
         console.log("Failed to get vector search results ", err);
       });
-
-    console.log("vector search");
     return similarDocs;
   }
 
